@@ -1,4 +1,4 @@
-# ExactL3 PPI (journal version)
+# ExactL3 PPI
 ExactL3 (L3E) is a better network modeling approach for link prediction in protein-protein interaction networks.
 
 The journal publication of L3E is currently under review.
