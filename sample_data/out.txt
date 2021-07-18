@@ -1,0 +1,10 @@
+proteinA	proteinB	score
+A	C	0.0
+A	D	0.125
+A	F	0.0
+B	D	0.0
+B	E	0.0
+B	F	0.125
+C	E	0.125
+C	F	0.0
+D	E	0.0

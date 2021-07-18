@@ -1,0 +1,1 @@
+download HuRI.psi from http://www.interactome-atlas.org/download

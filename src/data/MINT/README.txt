@@ -1,0 +1,3 @@
+download yeast PPI dataset in http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/species:yeast and right click 'Save as' and rename as 'species yeast' (without file extension)
+
+download human PPI dataset in http://www.ebi.ac.uk/Tools/webservices/psicquic/mint/webservices/current/search/query/species:human and right click 'Save as' and rename as 'species human' (without file extension)
