@@ -108,12 +108,11 @@ class Helper:
         nodes = Helper.binary_relation_to_node(binaryRelat)
         # build dict
         relation = {}
-        if rSet:
-            for node in nodes: relation[node] = set()
-            for nodeArr in binaryRelat: relation[nodeArr[0]].add(nodeArr[1])
-        else:
-            for node in nodes: relation[node] = []
-            for nodeArr in binaryRelat: relation[nodeArr[0]].append(nodeArr[1])
+        for node in nodes: relation[node] = set()
+        for nodeArr in binaryRelat: relation[nodeArr[0]].add(nodeArr[1])
+        for nodeArr in binaryRelat: relation[nodeArr[1]].add(nodeArr[0])
+        if not rSet:
+            for node in relation: relation[node] = list(relation[node])
         return relation
 
     def relation_to_binary(relation):

@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import os
 import traversalHelper as tr
-import sys
 
 def parse_uniProt_map(uniProtMap):
     df = pd.read_csv(uniProtMap, sep='\t')

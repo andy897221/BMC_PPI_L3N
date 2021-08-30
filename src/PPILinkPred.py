@@ -34,7 +34,17 @@ class ns:
     L3Based = ["L3Normalizing", "L3Raw", "Sim"]
     L2Based = ["commonNeighbor"]
     CARBased = ["CRA", "CAR", "CH2_L3"]
-    # L3EBased = ["ExactL31", "ExactL31_2", "ExactL31_3", "ExactL31_4", "ExactL31_5", "ExactL32", "ExactL33", "ExactL34", "ExactL34_4"]
+    controlBased = ["countP4"]
+
+class control:
+    @staticmethod
+    def handler(samplePPIr, nodeX, nodeY, scoringMethod):
+        score = 0
+        if scoringMethod == "countP4":
+            uvPair, _, _ = L3.get_uv(nodeX, nodeY, samplePPIr)
+            score = len(uvPair)
+        
+        return score
 
 class L3:
     @staticmethod
@@ -127,35 +137,21 @@ class CAR:
 
 class L3E:
     jaccard_index = lambda A, B: len(A&B) / len(A|B)
-    overlap_index = lambda A, B: len(A&B) / min(len(A), len(B))
-    sd_index = lambda A, B: 2*len(A&B) / (len(A)+len(B))
+    jaccard_index_alt = lambda A, B: len(A&B) / (len(A|B)-1) if (len(A|B)-1) != 0 else 0
     CRA_index = lambda A, B: len(A&B)/len(A)
+    CRA_index_alt = lambda A, B: len(A&B)/(len(A)-1) if (len(A)-1) != 0 else 0
     outer_index = lambda a, B, N: len(B)/len(N[a]) # same for all scoringMethod (except simpCount) because $B \in N(a)$
-    func_map = {"f2": jaccard_index, "f3": overlap_index, "sd": sd_index, "f1": CRA_index}
+    func_map = {"f2": jaccard_index, "f1": CRA_index, "f1Alt": CRA_index_alt, "f2Alt": jaccard_index_alt}
     
     @staticmethod
     def handler(samplePPIr, nodePairs, scoringMethod, testmode, logging):
-        # scoringMethod structure: {method name}_L3E{variation #}
-        # L3E1 (full ver): x-U, x-v, u-V, U-v, u-y, V-y
-        # L3E2 (has outer, has similar): x-U, x-v, u-y, V-y
-        # L3E3 (has outer, no similar): x-U, u-V, U-v, V-y
-        # L3E4 (no outer, has similar): x-v, u-V, U-v, u-y
+        # scoringMethod structure: L3E_{function name}
         sim_index = None
         for func in L3E.func_map:
-            if func in scoringMethod: sim_index = L3E.func_map[func]
+            if func == scoringMethod.split("_")[1]: sim_index = L3E.func_map[func]
         # note that for CRA_index, the input order of the arg to sim_index matters
-        if "L3E1" in scoringMethod:
-            innerFunc = lambda u,v,U,V,x,y,N : sim_index(N[v],N[x]) * sim_index(N[u],N[y]) * sim_index(N[u],V) * sim_index(N[v],U)
-            outerFunc = lambda U,V,x,y,N : L3E.outer_index(x,U,N) * L3E.outer_index(y,V,N)
-        elif "L3E2" in scoringMethod:
-            innerFunc = lambda u,v,U,V,x,y,N : sim_index(N[v],N[x]) * sim_index(N[u],N[y])
-            outerFunc = lambda U,V,x,y,N : L3E.outer_index(x,U,N) * L3E.outer_index(y,V,N)
-        elif "L3E3" in scoringMethod:
-            innerFunc = lambda u,v,U,V,x,y,N : sim_index(N[u],V) * sim_index(N[v],U)
-            outerFunc = lambda U,V,x,y,N : L3E.outer_index(x,U,N) * L3E.outer_index(y,V,N)
-        elif "L3E4" in scoringMethod:
-            innerFunc = lambda u,v,U,V,x,y,N : sim_index(N[v],N[x]) * sim_index(N[u],N[y]) * sim_index(N[u],V) * sim_index(N[v],U)
-            outerFunc = lambda U,V,x,y,N : 1
+        innerFunc = lambda u,v,U,V,x,y,N : sim_index(N[v],N[x]) * sim_index(N[u],N[y]) * sim_index(N[u],V) * sim_index(N[v],U)
+        outerFunc = lambda U,V,x,y,N : L3E.outer_index(x,U,N) * L3E.outer_index(y,V,N)
 
         scores, predictedPPIbrs = [], []
         count, lastCount, total, avgTime = 0, 0, len(nodePairs), 0
@@ -173,27 +169,6 @@ class L3E:
             predictedPPIbrs.append(nodePair)
             if logging: count, lastCount, avgTime = helperFunc.logging(count, lastCount, total, avgTime, startTime)
         return scores, predictedPPIbrs
-
-def _PPILinkPred_old(nodePairs, samplePPIr, scoringMethod, logging=False, testmode=False):
-    scores, predictedPPIbrs = [], []
-    count, lastCount, total, avgTime = 0, 0, len(nodePairs), 0
-    for nodePair in nodePairs:
-        startTime = time.time()
-        if nodePair[1] in samplePPIr[nodePair[0]] and not testmode: continue
-        nodeX, nodeY = nodePair[0], nodePair[1]
-        if scoringMethod in ns.L3Based:
-            score = L3.handler(samplePPIr, nodeX, nodeY, scoringMethod)
-        elif scoringMethod in ns.L2Based:
-            score = L2.handler(samplePPIr, nodeX, nodeY, scoringMethod)
-        elif scoringMethod in ns.CARBased:
-            score = CAR.handler(samplePPIr, nodeX, nodeY, scoringMethod)
-        elif scoringMethod in ns.L3EBased:
-        # elif "L3E" in scoringMethod:
-            score = L3E.handler(samplePPIr, nodeX, nodeY, scoringMethod)
-        scores.append(score)
-        if logging: count, lastCount, avgTime = helperFunc.logging(count, lastCount, total, avgTime, startTime)
-        predictedPPIbrs.append(nodePair)
-    return scores, predictedPPIbrs
         
 
 def _PPILinkPred(nodePairs, samplePPIr, scoringMethod, logging=False, testmode=False):
@@ -233,6 +208,17 @@ def _PPILinkPred(nodePairs, samplePPIr, scoringMethod, logging=False, testmode=F
 
     elif "L3E" in scoringMethod:
         scores, predictedPPIbrs = L3E.handler(samplePPIr, nodePairs, scoringMethod, testmode, logging)
+
+    elif scoringMethod in ns.controlBased:
+        for nodePair in nodePairs:
+            startTime = time.time()
+            if nodePair[1] in samplePPIr[nodePair[0]] and not testmode: continue
+            nodeX, nodeY = nodePair[0], nodePair[1]
+            score = control.handler(samplePPIr, nodeX, nodeY, scoringMethod)
+            scores.append(score)
+            predictedPPIbrs.append(nodePair)
+            if logging: count, lastCount, avgTime = helperFunc.logging(count, lastCount, total, avgTime, startTime)
+
     # print("core finished")
     return scores, predictedPPIbrs
 

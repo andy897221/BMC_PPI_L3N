@@ -6,7 +6,6 @@ import os
 from collections import defaultdict
 from statistics import mean
 from scipy import stats
-import sys
 
 def parse_uniProt_map(uniProtMapF):
     df = pd.read_csv(uniProtMapF, sep='\t')
@@ -31,7 +30,8 @@ def parse_STRING(ppiFile='./data/STRING/4932.protein.links.v11.0.txt'
     dfType_STRING.rename(columns={'item_id_a': 'protein1', 'item_id_b': 'protein2'}, inplace=True)
     merged_df = pd.merge(df_STRING, dfType_STRING, on=['protein1', 'protein2'])
     merged_df = merged_df[['protein1', 'protein2', 'combined_score', 'mode']]
-    merged_df['combined_score'] = merged_df['combined_score']/1000
+    # merged_df['combined_score'] = merged_df['combined_score']/1000
+    merged_df['combined_score'] = merged_df['combined_score']
     
     ppis = [list(arr) for arr in np.asarray(merged_df[['protein1', 'protein2']])]
     scoreList, typeList = list(merged_df['combined_score']), list(merged_df['mode'])

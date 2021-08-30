@@ -4,7 +4,6 @@ import traversalHelper as tr
 import numpy as np
 from collections import defaultdict
 from statistics import mean
-import sys
 pd.options.mode.chained_assignment = None
 
 # data standard: nodeA, nodeB, type, score
