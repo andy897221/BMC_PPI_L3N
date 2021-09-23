@@ -26,7 +26,7 @@ Supported Link Predictors (see the paper details): ```L3```, ```L3EPrime(f1)```,
 
 The input file is a tab-delimited .csv file with no header & with two columns. The number of rows is the amount of PPIs. Each row represents a pair of protein (two columns) that exists a PPI. For example, a row ```A\tB``` implies protein 'A' and protein 'B' has a PPI.
 
-To use L3E programmatically, see ```./example.py``` as an example. It is encouraged to use L3E this way for real PPI datasets, so thata custom multiprocessing handler can be coded and parsed into the L3E function.
+To use L3E programmatically, see ```./example.py``` as an example. It is encouraged to use L3E this way for real PPI datasets, so that custom multiprocessing handler can be coded and parsed into the L3E function.
 
 # Implementations
 ```core.py``` is the actual implementation of the L3E and L3 algorithm. The code is self-explanatory.
