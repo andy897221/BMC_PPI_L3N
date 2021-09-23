@@ -19,10 +19,14 @@ if __name__ == "__main__":
     N = binary_to_neighborhood(ppi_br)
 
     scoreArgs = {}
-    if method == "L3Ef1":
+    if method == "L3EPrime(f1)":
         sortedScores, sortedPPIs = core.L3E.L3E(N, "f1")
-    elif method == "L3Ef2":
+    elif method == "L3EPrime(f2)":
         sortedScores, sortedPPIs = core.L3E.L3E(N, "f2")
+    elif method == 'L3E(f1)':
+        sortedScores, sortedPPIs = core.L3E.L3E(N, 'f1Alt')    
+    elif method == 'L3E(f2)':
+        sortedScores, sortedPPIs = core.L3E.L3E(N, 'f2Alt')
     elif method == "L3":
         sortedScores, sortedPPIs = core.L3.L3(N)
     else:

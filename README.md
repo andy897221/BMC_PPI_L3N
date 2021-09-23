@@ -20,9 +20,9 @@ To run main.py in the terminal:
 
 Example to run L3E(f1):
 
-```python main.py ./sample_data/example_PPI.txt ./sample_data/out.txt L3Ef1```
+```python main.py ./sample_data/example_PPI.txt ./sample_data/out.txt L3EPrime(f1)```
 
-Supported Link Predictors (see the paper details): ```L3```, ```L3E(f1)```, ```L3E(f2)```
+Supported Link Predictors (see the paper details): ```L3```, ```L3EPrime(f1)```, ```L3EPrime(f2)```, ```L3E(f1)```, ```L3E(f2)```
 
 The input file is a tab-delimited .csv file with no header & with two columns. The number of rows is the amount of PPIs. Each row represents a pair of protein (two columns) that exists a PPI. For example, a row ```A\tB``` implies protein 'A' and protein 'B' has a PPI.
 

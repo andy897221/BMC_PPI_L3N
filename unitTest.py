@@ -53,37 +53,35 @@ class testData:
 
 
 class unitTestL3E(unittest.TestCase):
+    def runTest(self, testcase, allNodePairs):
+        self.assertEqual(core.L3E.L3E(testcase, "f1")
+        , ppiLPred._PPILinkPred(allNodePairs, testcase, "L3E_f1"))
+        self.assertEqual(core.L3E.L3E(testcase, "f2")
+        , ppiLPred._PPILinkPred(allNodePairs, testcase, "L3E_f2"))
+        self.assertEqual(core.L3E.L3E(testcase, "f1Alt")
+        , ppiLPred._PPILinkPred(allNodePairs, testcase, "L3E_f1Alt"))
+        self.assertEqual(core.L3E.L3E(testcase, "f2Alt")
+        , ppiLPred._PPILinkPred(allNodePairs, testcase, "L3E_f2Alt"))
+
     def testA(self):
         testcaseA = testData.getTestA()
         allNodePairs = list(combinations(list(testcaseA.keys()), 2))
-        self.assertEqual(core.L3E.L3E(testcaseA, "f1")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseA, "L3E_f1"))
-        self.assertEqual(core.L3E.L3E(testcaseA, "f2")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseA, "L3E_f2"))
+        self.runTest(testcaseA, allNodePairs)
 
     def testB(self):
         testcaseB = testData.getTestB()
         allNodePairs = list(combinations(list(testcaseB.keys()), 2))
-        self.assertEqual(core.L3E.L3E(testcaseB, "f1")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseB, "L3E_f1"))
-        self.assertEqual(core.L3E.L3E(testcaseB, "f2")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseB, "L3E_f2"))
+        self.runTest(testcaseB, allNodePairs)
 
     def testC(self):
         testcaseC = testData.getTestC()
         allNodePairs = list(combinations(list(testcaseC.keys()), 2))
-        self.assertEqual(core.L3E.L3E(testcaseC, "f1")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseC, "L3E_f1"))
-        self.assertEqual(core.L3E.L3E(testcaseC, "f2")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseC, "L3E_f2"))
+        self.runTest(testcaseC, allNodePairs)
 
     def testD(self):
         testcaseD = testData.getTestD()
         allNodePairs = list(combinations(list(testcaseD.keys()), 2))
-        self.assertEqual(core.L3E.L3E(testcaseD, "f1")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseD, "L3E_f1"))
-        self.assertEqual(core.L3E.L3E(testcaseD, "f2")
-        , ppiLPred._PPILinkPred(allNodePairs, testcaseD, "L3E_f2"))
+        self.runTest(testcaseD, allNodePairs)
 
 if __name__ == "__main__":
     # unit test: assert with the L3E used the experiments "./src/PPILinkPred.py" (non-cleaned version)

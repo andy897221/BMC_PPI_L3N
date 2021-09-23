@@ -76,7 +76,7 @@ class init_graph:
     @staticmethod
     def ideal_L3_graph(graphSize):
         br = []
-        uvs = [("u"+str(i), "v"+str(j)) for i in range(graphSize) for j in range(graphSize) if i != j]
+        uvs = [("u"+str(i), "v"+str(j)) for i in range(graphSize) for j in range(graphSize)]
         for i in range(graphSize): br.append(('x', 'u'+str(i)))
         for i in range(graphSize): br.append(('y', 'v'+str(i))) 
         br += uvs
@@ -222,7 +222,7 @@ def sim_core(args, iterable):
     scores.put(scores_loc)
     return
 
-def simulation(method, graphSize, saturateRatio, graph_func, simulating, coreNo=10, trials=10):
+def simulation(method, graphSize, saturateRatio, graph_func, simulating, coreNo=10, trials=10, normalizing=True):
     '''
     @graphSize: see class mod_graph
     @saturateRatio: ratio of edges number to add w.r.t to the valid maximum
@@ -234,7 +234,7 @@ def simulation(method, graphSize, saturateRatio, graph_func, simulating, coreNo=
         raise ValueError("invalid simulating function for the init graph type")
 
     maxEdgeNum = mod_graph.max_edge_num[simulating](graphSize)
-    n = int(maxEdgeNum*saturateRatio)
+    n = int(maxEdgeNum*saturateRatio)+1 # off-by-one to offset end of for-loop
 
     if coreNo > 1:
         mgr = Manager()
@@ -251,9 +251,10 @@ def simulation(method, graphSize, saturateRatio, graph_func, simulating, coreNo=
                 mergedRes[trial].update(scoresDict[trial])
         scores = [np.asarray([res[n] for n in sorted(res)]) for res in mergedRes]
 
-        for i in range(len(scores)):
-            scores[i] = (scores[i]-np.min(scores[i]))/(np.max(scores[i])-np.min(scores[i]))
-        scores[i][scores[i] == np.inf] = 0
+        if normalizing:
+            for i in range(len(scores)):
+                scores[i] = (scores[i]-np.min(scores[i]))/(np.max(scores[i])-np.min(scores[i]))
+            scores[i][scores[i] == np.inf] = 0
     else:
         scores = []
         for trial in range(trials):
@@ -263,40 +264,75 @@ def simulation(method, graphSize, saturateRatio, graph_func, simulating, coreNo=
                     graphSize, j, ns.init_graph_map[graph_func])
                 score, _ = ppiLPred._PPILinkPred([['x', 'y']], N, scoringMethod=method)
                 scores[-1].append(score[0])
-            scores[-1] = np.asarray(scores[-1])
-            scores[-1] = (scores[-1]-np.min(scores[-1]))/(np.max(scores[-1])-np.min(scores[-1]))
-            scores[-1][scores[-1] == np.inf] = 0
+
+            if normalizing:
+                scores[-1] = np.asarray(scores[-1])
+                scores[-1] = (scores[-1]-np.min(scores[-1]))/(np.max(scores[-1])-np.min(scores[-1]))
+                scores[-1][scores[-1] == np.inf] = 0
 
     return scores
 
 if __name__ == "__main__":
-    scores = simulation(method="countP4", graphSize=10, saturateRatio=1,
-    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=1, trials=1)
-    print(scores)
+    scoresA = simulation(method="countP4", graphSize=10, saturateRatio=1,
+    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=1, trials=2)
+    scoresB = simulation(method="countP4", graphSize=10, saturateRatio=1,
+    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=2, trials=2)
+    # avoid float precision inaccuracy
+    scoresA = [np.around(i, 4) for i in np.asarray(scoresA)[0]]
+    scoresB = [np.around(i, 4) for i in np.asarray(scoresB)[0]]
+    assert scoresA[0] == scoresB[0]
+    assert scoresA[-1] == scoresB[-1]    
+    print(scoresA)
 
     quit()
     # unit test
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
-    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=1, trials=2)
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
-    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=2, trials=2)
+    # only assert start score and end score since the rest are randomized
+    scoresA = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=1, trials=2, normalizing=False)
+    scoresB = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    graph_func="ideal_L3_graph", simulating="removeComp_idealL3", coreNo=2, trials=2, normalizing=False)
+    # avoid float precision inaccuracy
+    scoresA = [np.around(i, 4) for i in np.asarray(scoresA)[0]]
+    scoresB = [np.around(i, 4) for i in np.asarray(scoresB)[0]]
+    assert scoresA[0] == scoresB[0]
+    assert scoresA[-1] == scoresB[-1]
+    
+    scoresA = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    graph_func="ideal_L3_graph", simulating="addIncompA", coreNo=1, trials=1, normalizing=False)
+    scoresB = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    graph_func="ideal_L3_graph", simulating="addIncompA", coreNo=2, trials=1, normalizing=False)
+    # avoid float precision inaccuracy
+    scoresA = [np.around(i, 4) for i in np.asarray(scoresA)[0]]
+    scoresB = [np.around(i, 4) for i in np.asarray(scoresB)[0]]
+    assert scoresA[0] == scoresB[0]
+    assert scoresA[-1] == scoresB[-1]
 
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
-    graph_func="ideal_L3_graph", simulating="addIncompA", coreNo=1, trials=2)
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
-    graph_func="ideal_L3_graph", simulating="addIncompA", coreNo=2, trials=2)
-
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    scoresA = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
     graph_func="ideal_L3_graph", simulating="addIncompB", coreNo=1, trials=2)
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    scoresB = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
     graph_func="ideal_L3_graph", simulating="addIncompB", coreNo=2, trials=2)
+    # avoid float precision inaccuracy
+    scoresA = [np.around(i, 4) for i in np.asarray(scoresA)[0]]
+    scoresB = [np.around(i, 4) for i in np.asarray(scoresB)[0]]
+    assert scoresA[0] == scoresB[0]
+    assert scoresA[-1] == scoresB[-1]
 
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    scoresA = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
     graph_func="ideal_L3_graph", simulating="addIncompC", coreNo=1, trials=2)
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    scoresB = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
     graph_func="ideal_L3_graph", simulating="addIncompC", coreNo=2, trials=2)
+    # avoid float precision inaccuracy
+    scoresA = [np.around(i, 4) for i in np.asarray(scoresA)[0]]
+    scoresB = [np.around(i, 4) for i in np.asarray(scoresB)[0]]
+    assert scoresA[0] == scoresB[0]
+    assert scoresA[-1] == scoresB[-1]
 
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    scoresA = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
     graph_func="simple_L3_graph", simulating="addComp_simpleL3", coreNo=1, trials=2)
-    score = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
+    scoresB = simulation(method="L3E1_f1", graphSize=3, saturateRatio=1,
     graph_func="simple_L3_graph", simulating="addComp_simpleL3", coreNo=2, trials=2)
+    # avoid float precision inaccuracy
+    scoresA = [np.around(i, 4) for i in np.asarray(scoresA)[0]]
+    scoresB = [np.around(i, 4) for i in np.asarray(scoresB)[0]]
+    assert scoresA[0] == scoresB[0]
+    assert scoresA[-1] == scoresB[-1]

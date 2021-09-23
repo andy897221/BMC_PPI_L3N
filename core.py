@@ -38,11 +38,16 @@ class L3:
 class L3E:
     sim_f1 = lambda A, B: len(A&B)/len(A) # similarity function: simple ratio
     sim_f2 = lambda A, B: len(A&B)/len(A|B) # similarity function: jaccard index
+    sim_f2Alt = lambda A, B: len(A&B) / (len(A|B)-1) if (len(A|B)-1) != 0 else 0
+    sim_f1Alt = lambda A, B: len(A&B)/(len(A)-1) if (len(A)-1) != 0 else 0
+    outer_index = lambda A, B: len(B)/len(A) # same for all scoringMethod because $B \in N(a)$
 
     @staticmethod
     def L3E(N, sim_name):
         if sim_name == 'f1': sim_f = L3E.sim_f1
         elif sim_name == 'f2': sim_f = L3E.sim_f2
+        elif sim_name == 'f1Alt': sim_f = L3E.sim_f1Alt
+        elif sim_name == 'f2Alt': sim_f = L3E.sim_f2Alt
         else: raise AttributeError("similarity function {} does not exist".format(sim_name))
         scores, predictedPPIs = [], []
         allNodePairs = list(combinations(list(N.keys()), 2))
@@ -54,7 +59,7 @@ class L3E:
             score = 0
             for [u, v] in uvPair:
                 score += sim_f(N[v],N[x]) * sim_f(N[u],N[y]) * sim_f(N[u],V) * sim_f(N[v],U)
-            score *= sim_f(N[x],U) * sim_f(N[y],V)
+            score *= L3E.outer_index(N[x],U) * L3E.outer_index(N[y],V)
             scores.append(score)
             predictedPPIs.append(nodePair)
         return scores, predictedPPIs
