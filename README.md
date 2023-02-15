@@ -33,4 +33,8 @@ To use L3N programmatically, see ```./example.py``` as an example. It is encoura
 ```unitTest.py``` provides basic unit tests of simple types of PPI graphs. it is to show that the predictors implementation in ```core.py``` is the same as the predictors in ```./src/PPILinkPred.py``` under the unit tests, of which ```./src/PPILinkPred.py``` is the actual implementation used for the experiments in the paper (e.g. multiprocessing handler is included to generate data).
 
 # Documentations
-Details of L3N networking modeling is available in the paper, and details of the folder ```./src/notebook``` (data processing, results, and figures) are briefly elaborated [here](docs.md)
+Details to use the datasets that generated the data in our publication is documented [here](datasets_docs.md)
+
+Details of L3N networking modeling is available in the paper, DOI: 10.1186/s12859-023-05178-3
+
+Details of the folder ```./src/notebook``` (data processing, results, and data figures) are briefly elaborated [here](docs.md)
