@@ -1,10 +1,7 @@
-# NormalizedL3 Link Prediction for PPI Networks
-NormalizedL3 (L3N) is a better network modeling approach for link prediction in protein-protein interaction networks.
+# Normalized L3-based Link Prediction in Protein-Protein Interaction Networks
+NormalizedL3 (L3N) is a network modeling approach for link prediction in protein-protein interaction networks.
 
-The journal publication of L3N is currently under major revision.
-
-Preliminary version of L3N (named L3E) is published at IEEE-BIBE 2020, awarded with the Best Bioinformatics Paper Award, link:
-https://doi.org/10.1109/BIBE50027.2020.00017
+The journal publication of L3N has currently accepted and awaiting online, DOI: 10.1186/s12859-023-05178-3
 
 This repo includes the proposed algorithms, jupyter notebooks that code all the experiments for data & figure generations, and a command-line script to run L3 and L3N link predictors for PPI networks.
 
@@ -26,14 +23,14 @@ Supported Link Predictors (see the paper details): ```L3```, ```L3NPrime(f1)```,
 
 The input file is a tab-delimited .csv file with no header & with two columns. The number of rows is the amount of PPIs. Each row represents a pair of protein (two columns) that exists a PPI. For example, a row ```A\tB``` implies protein 'A' and protein 'B' has a PPI.
 
-To use L3E programmatically, see ```./example.py``` as an example. It is encouraged to use L3E this way for real PPI datasets, so that custom multiprocessing handler can be coded and parsed into the L3E function.
+To use L3N programmatically, see ```./example.py``` as an example. It is encouraged to use L3E this way for real PPI datasets, so that custom multiprocessing handler can be coded and parsed into the L3E function.
 
 # Implementations
-```core.py``` is the actual implementation of the L3E and L3 algorithm. The code is self-explanatory.
+```core.py``` is the actual implementation of the L3N and L3 algorithm. The code is self-explanatory.
 
 ```example.py``` and ```main.py```: see [Usage](#Usage).
 
-```unitTest.py``` provides basic unit test of simple types of PPI graphs. it is to show that the predictors implementation in ```core.py``` is the same as the predictors in ```./src/PPILinkPred.py```, of which ```./src/PPILinkPred.py``` is the actual implementation used for the experiments in the paper (e.g. multiprocessing handler is included to generate data).
+```unitTest.py``` provides basic unit tests of simple types of PPI graphs. it is to show that the predictors implementation in ```core.py``` is the same as the predictors in ```./src/PPILinkPred.py``` under the unit tests, of which ```./src/PPILinkPred.py``` is the actual implementation used for the experiments in the paper (e.g. multiprocessing handler is included to generate data).
 
 # Documentations
-Details of L3N networking modeling is available in the paper (under review), and details of the folder ```./src/notebook``` (data processing, results, and figures) are elaborated [here](docs/docs.md)
+Details of L3N networking modeling is available in the paper, and details of the folder ```./src/notebook``` (data processing, results, and figures) are briefly elaborated [here](docs.md)
