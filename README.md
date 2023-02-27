@@ -1,7 +1,7 @@
 # Normalized L3-based Link Prediction in Protein-Protein Interaction Networks
 NormalizedL3 (L3N) is a network modeling approach for link prediction in protein-protein interaction networks.
 
-The journal publication of L3N has currently accepted and awaiting online, DOI: 10.1186/s12859-023-05178-3
+The journal publication of L3N has currently online in BMC Bioinformatics: [10.1186/s12859-023-05178-3](https://doi.org/10.1186/s12859-023-05178-3)
 
 This repo includes the proposed algorithms, jupyter notebooks that code all the experiments for data & figure generations, and a command-line script to run L3 and L3N link predictors for PPI networks.
 
@@ -35,6 +35,6 @@ To use L3N programmatically, see ```./example.py``` as an example. It is encoura
 # Documentations
 Details to use the datasets that generated the data in our publication is documented [here](datasets_docs.md)
 
-Details of L3N networking modeling is available in the paper, DOI: 10.1186/s12859-023-05178-3
+Details of L3N networking modeling is available in the paper, [10.1186/s12859-023-05178-3](https://doi.org/10.1186/s12859-023-05178-3)
 
 Details of the folder ```./src/notebook``` (data processing, results, and data figures) are briefly elaborated [here](docs.md)
