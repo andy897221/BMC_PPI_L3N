@@ -4,4 +4,4 @@ The basic workflow of this project is arranged as follow: sampled datasets were 
 
 ```./src/notebook/img_experiments``` and ```./src/notebook/img_simulation``` include all the figures generated for the study.
 
-Full methodology is described in details in - DOI: 10.1186/s12859-023-05178-3
+Full methodology is described in details in - [10.1186/s12859-023-05178-3](https://doi.org/10.1186/s12859-023-05178-3)
